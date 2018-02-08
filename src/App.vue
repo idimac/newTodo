@@ -6,7 +6,7 @@
     <div class="row justify-content-md-center">
       <div class="col-md-7 col-lg-7 col-sm-12">
       <div class="input-group mb-3">
-        <input type="text" class="form-control"  @keyup.13="saveNewTask()" placeholder="Enter new task" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <input type="text" class="form-control" v-model="textOfNewTask" @keyup.13="saveNewTask()" placeholder="Enter new task" aria-label="Recipient's username" aria-describedby="basic-addon2">
         <div class="input-group-append">
           <button class="btn btn-outline-secondary" @click="saveNewTask()" type="button">Button</button>
         </div>
@@ -16,10 +16,8 @@
          :key="todo.id" 
          :id ="i" 
          :title="todo.name"
-         :editNow="todo.edit"
          :completed="todo.completed"
          @save="saveEmitedFromChild" 
-         @edit="editEmitedFromChild"
          @completedTask="completeEmitedFromChild"
          @remove="removeEmitedFromChild"></todo>
       </ul>
@@ -35,22 +33,18 @@ export default {
   name: 'app',
   data () {
     return {
+      textOfNewTask: '',
       todos: JSON.parse(localStorage.getItem('myTodos')) || []
     }
   },
   methods: {
       saveNewTask: function () {
-      let textOfNewTask = document.querySelector('.form-control').value;
-      if(textOfNewTask) {
-      let newTask = {name: textOfNewTask, edit: false, completed: false};
+      if(this.textOfNewTask) {
+      let newTask = {name: this.textOfNewTask, completed: false};
       this.todos.push(newTask);
       localStorage.setItem('myTodos', JSON.stringify(this.todos));
-      document.querySelector('.form-control').value = "";
+      this.textOfNewTask = "";
       }
-    },
-      editEmitedFromChild: function(id) {
-      this.todos[id].edit = !this.todos[id].edit;
-      setTimeout(function(){document.querySelector('.edited').focus()},100); //КАК ЭТО ПОФИКСИТЬ? 
     },
       saveEmitedFromChild: function (id, inputNewValue) {
       this.todos[id].edit = !this.todos[id].edit;
